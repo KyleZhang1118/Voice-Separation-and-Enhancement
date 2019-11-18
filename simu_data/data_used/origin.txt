@@ -1,0 +1,13 @@
+TIMIT - test - core test set:
+90¡ãdr1 - felc0: si1386  88372 In wage negotiations, the industry bargains as a unit with a single union.
+
+135¡ãdr1 - mwbt0: si1553  76084 However, the litter remained, augmented by several dozen lunchroom suppers.
+
+270¡ãdr2 - mtas1: sx388   64615 Her right hand aches whenever the barometric pressure changes.
+180¡ãdr4 - fjlm0: si2303  64922 In short, and to borrow an arboreal phrase, slash timber.
+
+
+0¡ã   si1991
+45¡ã  si1564
+315¡ã si2194
+225¡ã si819
