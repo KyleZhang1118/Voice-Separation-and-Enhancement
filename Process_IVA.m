@@ -36,7 +36,7 @@ for i = 1:K_m
     if rcond(Ori)<theta
         Ori = Ori+eye(Num)*min(diag(Ori));
     end
-    %%%%%%%%%%%% Ajust amplitude of 'w'
+    %%%%%%%%%%%% Adjust amplitude of 'w'
     W_o = inv(Ori);
     y_f = W_o*V*X_f;
     norm = max(abs(y_f),[],2);

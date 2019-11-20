@@ -1,5 +1,5 @@
 function [] = autoPlot(S,method,fs,para)
-% 'S'£ºLen * Num, 'method' is the name of method£¬if the 2rd para is not char, then shift
+% 'S':Len * Num, 'method' is the name of method,if the 2rd para is not char, then shift
 if(~ischar(method))
     if(~exist('fs','var'))
         fs = method;

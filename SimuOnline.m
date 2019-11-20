@@ -1,22 +1,22 @@
 function [Y,SetupStruc] = SimuOnline(s,Transfer,SetupStruc,method)
-%%%%%模拟在线对原信号进行分帧并构成块，每一帧信号都进行加窗，输入算法核
-%%%%%将核返回的块进行去窗拼成时域信号，拼接上一块
-%%%%%
-%%%%%算法核定义，接收已加窗的语音帧构成的块，针对该块进行计算返回该块
+%%%%% Simulate of online framing and blocking signals,  adding window funcion, putting into the algorithm core
+%%%%% Convert the block back from algo core to time domian, splice the last block
+%%%%% 
+%%%%% The definition of algo core: recieving the block of speech frames, process the block then feedback
 K = SetupStruc.K;
 hop = SetupStruc.hop;
 L = SetupStruc.L;
 win = hanning(K,'periodic');
 win = win/sqrt(sum(win(1:hop:K).^2));
-SetupStruc.win = win;  %win窗反传保留
+SetupStruc.win = win;  % Save the window function
 N = size(s,2);
 Num = size(Transfer,3);
 Y = zeros(size(s,1),Num);
-Block = zeros(K,N,L); %%%% 帧长x通道x帧数
+Block = zeros(K,N,L); %%%% frame length* channel* frame number
 a = 1;
 aBlock = 1;
 l = 1;
-if(isfield(SetupStruc,'InL'))    %%%%判断该函数是否需要进行第一次长计算以初始化参数
+if(isfield(SetupStruc,'InL'))    %%%% Judge if this method needs a long range cal to initialize
     Block1 = zeros(K,N,SetupStruc.InL);
     if(isfield(SetupStruc,'unS'))
         SetupStruc.Block = zeros(K,N,SetupStruc.InL,Num);
@@ -42,7 +42,7 @@ if(isfield(SetupStruc,'unS'))
     SetupStruc.Block = zeros(K,N,L,Num);
 end
 while(a+K<size(s,1))
-    Block(:,:,l) = s(a:a+K-1,:); %%%填充块
+    Block(:,:,l) = s(a:a+K-1,:); %%% Padding the bolck
     if(isfield(SetupStruc,'unS'))
         for j = 1:Num
             SetupStruc.Block(:,:,l,j) = SetupStruc.unS(a:a+K-1,:,j);

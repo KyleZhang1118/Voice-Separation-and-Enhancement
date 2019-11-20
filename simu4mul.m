@@ -16,7 +16,7 @@ method = {'DSB'                0;
           'ICA'                0;
           'IVA'                0;
           'ALL'                0
-          };                      %%%%%%%该版本暂时只支持单一方法，请勿同时选择多个方法与‘ALL’
+          };                      %%%%%%% This version only support single method once, dont select multiple methods and 'ALL'
 speakerNum = 10;
 pathFe = 'F:\simuData\sound sources\simulation\female';
 dirFe = dir(pathFe);
@@ -61,7 +61,7 @@ for angle = 0:5:180
         sAngle{i} = signal;
         clear signal;
     end
-    %%%%%%%%%%%%%%%%%%%%%%各种设定初始化
+    %%%%%%%%%%%%%%%%%%%%%% Initialization
     SetupStruc = ISM_setup;
     SetupStruc.Angle = [0 angle];
     SetupStruc.fs = fs;

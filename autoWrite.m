@@ -1,5 +1,5 @@
 function [] = autoWrite(S,fs,method)
-% 'S'£ºLen * Num
+% 'S':Len * Num
 if(~exist('method','var'))
     method = [];
 end
