@@ -3,7 +3,7 @@ function [E,D] = PCA(vectors, firstEig, lastEig, rankTolerance)
 %vectors:Num*samples
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Default values:
 if nargin < 2, firstEig = 1; end
 if(nargin >2 && lastEig>size(vectors,1))
@@ -37,11 +37,11 @@ end
 % See if the user has reduced the dimension enough
 
 % if lastEig < maxLastEig
-%     fprintf('¼ì²âµ½ %d¸öÐÅºÅÔ´ \n',...
+%     fprintf('ï¿½ï¿½âµ½ %dï¿½ï¿½ï¿½Åºï¿½Ô´ \n',...
 %            lastEig);
 %     num=lastEig;
 % else
-%      fprintf ('ÐÅºÅÔ´Óë´«¸ÐÆ÷ÊýÁ¿Ò»ÖÂ.\n');
+%      fprintf ('ï¿½Åºï¿½Ô´ï¿½ë´«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½.\n');
 % end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
