@@ -1,7 +1,7 @@
 clc;clear;
 close all;
 sign4online = 0;
-method = {'DSB'                0;
+method = {'DSB'                1;
           'DSB_Mask'           0;
           'MVDR'               0;
           'MVDR_ESB'           0;
@@ -13,21 +13,26 @@ method = {'DSB'                0;
           'LCMV_ESB'           0;
           'LCMV_AESB'          0;
           'LCMV_Search'        0;
-          'ICA'                0;
+          'ICA_funda'          0;
+          'ICA_initial'        0;
+          'ICA_Sawada'         0;
           'IVA'                0;
+          'maxSNR'             0;
+          %%%%%%% Compound method
+          'cGMM_maxSNR'        0;
           'ALL'                0
           };                      %%%%%%% This version only support single method once, dont select multiple methods and 'ALL'
 speakerNum = 10;
-pathFe = 'F:\simuData\sound sources\simulation\female';
+pathFe = '..\simuData\sound sources\simulation\female';
 dirFe = dir(pathFe);
-pathMa = 'F:\simuData\sound sources\simulation\male';
+pathMa = '..\simuData\sound sources\simulation\male';
 dirMa = dir(pathMa);
 for T60 = 0:0.3:0.3%0.9
 angle = 0;
 subpath = strcat('T60_',num2str(T60),'\Angle_',num2str(angle));
 sOri{speakerNum} = [];
 sZero{speakerNum} = [];
-headPathOri = 'F:\simuData\sound sources\origin';
+headPathOri = '..\simuData\sound sources\origin';
 for i = 1:speakerNum
     if(i<=round(speakerNum/2))
         path = fullfile(pathFe,dirFe(i+2).name,subpath);
