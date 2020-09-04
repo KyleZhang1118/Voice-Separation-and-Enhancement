@@ -19,7 +19,7 @@ method = {'DSB'                0;
           'LCMV_AESB'          0;
           'LCMV_Search'        0;
           'ICA_funda'          0;
-          'ICA_initial'        0;
+          'ICA_initial'        1;
           'ICA_Sawada'         0;
           'IVA'                0;
           'AuxIVA'             0;
