@@ -1,6 +1,6 @@
 close all;
 clc;clear;
-folderPath = './Results';
+folderPath = '/Results';
 dirFol = dir(folderPath);
 j_num=0;
 Metrics_num = 3;
@@ -71,7 +71,7 @@ j_num = j_num/method_num*Metrics_num;
 for i =1:j_num
     if(mod(i,Metrics_num)==1 || Metrics_num==1)
         figure(i)
-        xlabel('Angle/��')
+        xlabel('Angle/degree')
         ylabel('SDR/dB')
         eval(strcat('legend(',leS,')'));
         title(strcat('Methods in  Room with T60 =',dirMet((i-1)/Metrics_num+3).name(5:end),'s'))
@@ -79,7 +79,7 @@ for i =1:j_num
         if(Metrics_num==1) continue; end
     elseif(mod(i,Metrics_num)==2 || Metrics_num==2)
         figure(i)
-        xlabel('Angle/��')
+        xlabel('Angle/degree')
         ylabel('SIR/dB')
         eval(strcat('legend(',leS,')'));
         title(strcat('Methods in  Room with T60 =',dirMet((i-2)/Metrics_num+3).name(5:end),'s'))
@@ -87,7 +87,7 @@ for i =1:j_num
         if(Metrics_num==2) continue;end
     elseif(mod(i,Metrics_num)==0)
         figure(i)
-        xlabel('Angle/��')
+        xlabel('Angle/degree')
         ylabel('SAR/dB')
         eval(strcat('legend(',leS,')'));
         title(strcat('Methods in  Room with T60 =',dirMet(i/Metrics_num+2).name(5:end),'s'))

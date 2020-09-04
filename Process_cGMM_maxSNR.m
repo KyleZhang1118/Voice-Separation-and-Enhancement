@@ -60,7 +60,10 @@ for i = 2:K_m
         if(rcond(R_i)<theta)
             R_i = R_i+eye(N)*max(diag(R_i))*theta;
         end
-        [E,~] = PCA(R_i\R_d,1,1);
+%         [E,~] = PCA(R_i\R_d,1,1);
+        [E,D] = eig(R_i\R_d);
+        [~,index] = max(diag(D));
+        E = E(:,index);
         W_f(:,j) = E*sqrt(E'*R_i*R_i*E/N)/(E'*R_i*E);  %%%%%% WAN post filtering
     end
     W_f = W_f';

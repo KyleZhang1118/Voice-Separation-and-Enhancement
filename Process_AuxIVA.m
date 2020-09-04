@@ -1,9 +1,9 @@
-function [Y,W,SetupStruc] = Process_IVA(s,Transfer,SetupStruc)
-K = SetupStruc.IVA.K;
-hop = SetupStruc.IVA.hop;
+function [Y,W,SetupStruc] = Process_AuxIVA(s,Transfer,SetupStruc)
+K = SetupStruc.AuxIVA.K;
+hop = SetupStruc.AuxIVA.hop;
 win = hanning(K,'periodic');
 win = win/sqrt(sum(win(1:hop:K).^2));
-SetupStruc.IVA.win = win;  % Preserve 'win' in 'SetupStruc'
+SetupStruc.AuxIVA.win = win;  % Preserve 'win' in 'SetupStruc'
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 N = size(s,2);
 for i = 1:N
@@ -30,16 +30,20 @@ for i = 1:K_m
     %%%%%%%%%%%% Adjust amplitude of 'w'
     W_o = eye(Num);
     y_f = W_o*V*X_f;
+%     norm = max(abs(y_f),[],2);
+%     if(norm>10)
+%         norm = repmat(norm,1,Num);
+%         W_o = W_o./norm;
+%         y_f = W_o*V*X_f;
+%     end
     W_IVA(:,:,i) = W_o;
     Y_f(:,:,i) = y_f;    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% IVA iterations
-epsi = 1e-6;
-step_size = 0.1;
 max_iteration = 1000;
 Y_k = zeros(Num,frame_N);
-% K_sp = sqrt(K_m);
+epsi = 1e-6;
 pObj = inf;
 A = zeros(1001,2)-1; %%%% Show the decrease of non-linear correlation, IVA max iterations 1000
 for iteration = 1:max_iteration
@@ -51,12 +55,19 @@ for iteration = 1:max_iteration
     for i = 1:K_m
         W = W_IVA(:,:,i);
         X_f = X_sp(:,:,i);
-        y_f = Y_f(:,:,i);
-        y_fun = y_f./Y_k;
-%         y_fun = K_sp*tanh(K_sp*Y_k).*y_f./Y_k;
-        core = eye(size(W))-y_fun*y_f'/frame_N;
         dlw = dlw +log(abs(det(W))+epsi);
-        W = W+step_size*core*W;
+        for i_n = 1:Num
+            G_ = Y_k(i_n,:).^-1;
+            G_ = repmat(G_,Num,1);
+            Vk = (G_.*X_f)*X_f'/frame_N;
+            if rcond(Vk)<theta
+                Vk = Vk+eye(Num)*min(eig(Vk))*theta;
+            end
+            wk = inv(W*Vk);
+            wk = wk(:,i_n);
+            wk = wk/(sqrt(wk'*Vk*wk)+epsi);
+            W(i_n,:) = wk';
+        end
         W_IVA(:,:,i) = W;
         Y_f(:,:,i) = W*X_f;
     end

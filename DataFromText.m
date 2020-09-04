@@ -1,7 +1,7 @@
 clc;clear;
 close all;
 method = 'LCMV_Search';
-folderPath = fullfile('.\Results',method);
+folderPath = fullfile('./Results',method);
 dirOri = dir(folderPath);
 for i = 1:length(dirOri)
     if( isequal(dirOri(i).name,'.')||...

@@ -29,16 +29,29 @@ SetupStruc.fs = fs;
 len = min(Len);
 s = s_temp1(1:len,:);
 Unmix_s(:,:,1) = s;
-Ori_s = s_temp1(1:len,channel);
+if(Num>1)
+    Ori_s = zeros(len,Num);   
+    Ori_s(:,1) = s_temp1(1:len,channel);
+else
+    Ori_s = zeros(len,2);
+    Ori_s_temp = audioread(strcat(dataPath,'0/',num2str(Angle(1)),'/Mic0.wav'));
+    Ori_s(:,1) = Ori_s_temp(1:len);
+    Ori_s(:,2) = s_temp1(1:len,channel);
+end
 for n = 2:Num
     eval(strcat('s_temp = s_temp', num2str(n), ';'));
     s = s+s_temp(1:len,:);
     Unmix_s(:,:,n) = s_temp(1:len,:);
     Ori_s(:,n) = s_temp(1:len,channel);
 end
-if(Sign_compared>-1)
+if(Sign_compared<0 && Num>1)
     for i = 1:Num
-        Ori_s_temp = audioread(strcat(dataPath,'0/',num2str(Angle(i)),'/Mic',num2str(Sign_compared),'.wav'));
+        %%%% In the last version, if Sign_compared>-1, choose the signal in
+        %%%% the T60=0s, else in the select T60
+%         Ori_s_temp = audioread(strcat(dataPath,'0/',num2str(Angle(i)),'/Mic',num2str(Sign_compared),'.wav'));
+        %%%% In this version, if Sign_compared<0, chosse the original
+        %%%% signal, else choose the select T60
+        Ori_s_temp = audioread(strcat('simu_data/oral/',num2str(Angle(i)),'.wav'));
         Ori_s(:,i) = Ori_s_temp(1:len);
     end
 end
@@ -47,6 +60,6 @@ if(SetupStruc.AddNoiseFlag==1)
     sigma_noise = sqrt( av_pow/(10^(SetupStruc.NoiseSNR/10)) );		% st. dev. of white noise component to achieve desired SNR.
     s = s + sigma_noise*randn(size(s));      % Add some random noise
 end
-autoPlot(Ori_s,fs);
+% autoPlot(Ori_s,fs,-1);   %%%the 3rd parameter is used to control whether adjusting the range of y axis when equal -1
 % autoPlot(s(:,1),fs);
 return;

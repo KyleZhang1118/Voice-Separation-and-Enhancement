@@ -349,7 +349,7 @@ for i = 2:K_m
     end
 end
 %%
-autoPlot(Rate_meth,1);                
+% autoPlot(Rate_meth,1);                
 return;
 
 

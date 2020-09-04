@@ -233,7 +233,7 @@ if(ismember('ICA_Sawada',method) || ismember('ALL',method))
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(ismember('IVA',method) || ismember('ALL',method))
-    SetupStruc.IVA.K = 1024;                            
+    SetupStruc.IVA.K = 2048;                            
     SetupStruc.IVA.hop = round(SetupStruc.IVA.K/4);        
     Transfer = Cal_transfer(SetupStruc,'IVA');
     [Re.IVA.S,Re.IVA.W,SetupStruc] = Process_IVA(s,Transfer,SetupStruc);
@@ -243,6 +243,34 @@ if(ismember('IVA',method) || ismember('ALL',method))
     end
     if(sign_write == 1)
         autoWrite(Re.IVA.S,SetupStruc.fs,'IVA');
+    end    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(ismember('AuxIVA',method) || ismember('ALL',method))
+    SetupStruc.AuxIVA.K = 2048;                            
+    SetupStruc.AuxIVA.hop = round(SetupStruc.AuxIVA.K/4);        
+    Transfer = Cal_transfer(SetupStruc,'AuxIVA');
+    [Re.AuxIVA.S,Re.AuxIVA.W,SetupStruc] = Process_AuxIVA(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'AuxIVA'];
+    if(sign_plot == 1)
+        autoPlot(Re.AuxIVA.S,'AuxIVA',SetupStruc.fs);
+    end
+    if(sign_write == 1)
+        autoWrite(Re.AuxIVA.S,SetupStruc.fs,'AuxIVA');
+    end    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(ismember('OverIVA',method) || ismember('ALL',method))
+    SetupStruc.OverIVA.K = 2048;                            
+    SetupStruc.OverIVA.hop = round(SetupStruc.OverIVA.K/4);        
+    Transfer = Cal_transfer(SetupStruc,'OverIVA');
+    [Re.OverIVA.S,Re.OverIVA.W,SetupStruc] = Process_OverIVA(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'OverIVA'];
+    if(sign_plot == 1)
+        autoPlot(Re.OverIVA.S,'OverIVA',SetupStruc.fs);
+    end
+    if(sign_write == 1)
+        autoWrite(Re.OverIVA.S,SetupStruc.fs,'OverIVA');
     end    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -257,6 +285,22 @@ if(ismember('maxSNR',method) || ismember('ALL',method))
     end
     if(sign_write == 1)
         autoWrite(Re.maxSNR.S,SetupStruc.fs,'maxSNR');
+    end    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Dereverberation method
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(ismember('WPE',method) || ismember('ALL',method))
+    SetupStruc.WPE.K = 1024;                            %%%%% Adjustable coeficient 'K'
+    SetupStruc.WPE.hop = round(SetupStruc.WPE.K/2);        %%%%% Adjustable coeficient 'hop'
+%     Transfer = Cal_transfer(SetupStruc,'WPE');
+    [Re.WPE.S,SetupStruc] = Process_WPE(s,SetupStruc);
+    Re.method = [Re.method;'WPE'];
+    if(sign_plot == 1)
+        autoPlot(Re.WPE.S(:,1),'WPE',SetupStruc.fs);
+    end
+    if(sign_write == 1)
+        autoWrite(Re.WPE.S,SetupStruc.fs,'WPE');
     end    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

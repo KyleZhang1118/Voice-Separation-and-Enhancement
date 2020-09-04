@@ -47,10 +47,10 @@ for i = 2:K_m
     cond(i-1,2) = rcond(Ori); %%%%%%%
 end
 SetupStruc.ICA_initial.A = A;
-figure
-plot(cond(:,1))
-hold on 
-plot(cond(:,2))
+% figure
+% plot(cond(:,1))
+% hold on 
+% plot(cond(:,2))
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Recover signals
 if(K/hop==2)
     win = ones(K,1);

@@ -52,9 +52,9 @@ for i = 1:K_m
 %                 phi(t,j) = sum(diag(R_X(:,:,t)))/sum(diag(R_i(:,:,j)));
                 phi(t,j) = sum(diag(R_X(:,:,t)/R_i(:,:,j)))/N;
                 temp = R_i(:,:,j)*phi(t,j);
-%                 p_i(t,j) = abs(exp(-X_i(:,t)'/temp*X_i(:,t)/2)/(sqrt(det(temp))*const));
+%                 p_i(t,j) = abs(exp(-X_i(:,t)'/temp*X_i(:,t))/(sqrt(det(temp))*const));
 %                 const is a constant which doesnt affect the ratio between the components
-                p_i(t,j) = abs(exp(-X_i(:,t)'/temp*X_i(:,t)/2)/sqrt(det(temp)));
+                p_i(t,j) = abs(exp(-X_i(:,t)'/temp*X_i(:,t))/sqrt(det(temp)));
             end
         end
         for t = 1:frame_N

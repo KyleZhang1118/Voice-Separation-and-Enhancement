@@ -1,11 +1,16 @@
 function [] = autoPlot(S,method,fs,para)
 % 'S':Len * Num, 'method' is the name of method,if the 2rd para is not char, then shift
+sign_norm = 1;
 if(~ischar(method))
     if(~exist('fs','var'))
         fs = method;
     else 
         para = fs;
         fs = method;
+        if(para==-1)
+            sign_norm = 0;
+            clear para;
+        end
     end
     clear method;
 end
@@ -23,7 +28,9 @@ for i = 1:num
     else
         plot(S(:,i))
     end
-    ylim([min(min(S)) max(max(S))])
+    if(sign_norm)
+        ylim([min(min(S)) max(max(S))])
+    end
     xlabel('Time/s')
     if(i==1 && exist('method','var'))
         title(strrep(method,'_',' '))
@@ -35,8 +42,8 @@ for i = 1:num
             text(po_x,max(max(S))*0.5,num2str(para(i,3)))
             continue;
         end
-        text(po_x*0.9,max(max(S))*0.9,num2str(para(i,1)))
-        if(size(para,2)>4)
+        if(size(para,2)>4 || size(para,2)==2)
+            text(po_x*0.9,max(max(S))*0.9,num2str(para(i,1)))
             text(po_x*0.9,max(max(S))*0.7,num2str(para(i,2)))
         end
         if(size(para,2)>3)

@@ -1,12 +1,12 @@
 clc;clear;
 close all;
-Angle = [90,135];                               %Angle,Options:90,135,180,270
+Angle = [45];                               %Angle,Options:90,135,180,270 plus:0,45,225,315
 if(exist('SetupStruc','var'))
     [s,sOri,Unmix_s,~] = readData(Angle,ISM_setup);
 else
     [s,sOri,Unmix_s,SetupStruc] = readData(Angle,ISM_setup);    % 's' is the muli-channel mixture signal,size:Length*7,
 end                                            % 'sOri' is the each single singal of the 1st channel corresponding to the angle,size:Length*N
-method = {'DSB'                1;
+method = {'DSB'                0;
           'DSB_Mask'           0;
           'MVDR'               0;
           'MVDR_ESB'           0;
@@ -22,7 +22,11 @@ method = {'DSB'                1;
           'ICA_initial'        0;
           'ICA_Sawada'         0;
           'IVA'                0;
+          'AuxIVA'             0;
+          'OverIVA'            0; %%% not working
           'maxSNR'             0;
+          %%%%%%% Dereverberation
+          'WPE'                1;
           %%%%%%% Compound method
           'cGMM_maxSNR'        0;
           'ALL'                0
@@ -30,8 +34,5 @@ method = {'DSB'                1;
 SetupStruc.unS = Unmix_s;
 [Re,SetupStruc] = Process(method,s,SetupStruc);
 [Me] = Cal_metrics(Re,Unmix_s,sOri,SetupStruc);
-% A = [SetupStruc.ICA_funda.A(end,:)' SetupStruc.ICA_initial.A(end,:)'];
-% figure
-% plot(A(:,1),'.')
-% hold on 
-% plot(A(:,2),'.')
+
+

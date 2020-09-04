@@ -6,7 +6,11 @@ Num = size(sOri,2);
 InSIR = zeros(Num,1);
 OutSIR = zeros(Num,1);
 for i = 1:Num
-    InSIR(i) = CSNR(sOri,i);
+    if(length(SetupStruc.Angle)<2)
+        InDRR = CDRR(sOri(:,1),sOri(:,2),SetupStruc.fs);
+    else
+        InSIR(i) = CSNR(sOri,i);
+    end
 end
 Me.InSIR = InSIR;
 method_num = length(Re.method);
@@ -14,6 +18,11 @@ for i = 1:method_num
     method_name = Re.method{i};
     eval(strcat('ReStruc = Re.',method_name,';'));
     if(isfield(ReStruc,'S'))
+        if(length(SetupStruc.Angle)<2)
+            OutDRR = CDRR(sOri(:,1),ReStruc.S,SetupStruc.fs);
+            autoPlot(ReStruc.S(:,1),method_name,SetupStruc.fs,roundn([InDRR OutDRR],-2));
+            continue;
+        end
         eval(strcat('[SDR,SIR,SAR,perm]=bss_eval_sources(Re.',method_name,'.S,sOri);'));
         Us = FrePro(Unmix_s,eval(strcat('Re.',method_name,'.W;')),eval(strcat('SetupStruc.',method_name,';')));
         for j = 1:Num
