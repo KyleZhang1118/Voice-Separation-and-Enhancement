@@ -1,6 +1,6 @@
 clc;clear;
 close all;
-Angle = [45];                               %Angle,Options:90,135,180,270 plus:0,45,225,315
+Angle = [45, 180];                               %Angle,Options:90,135,180,270 plus:0,45,225,315
 if(exist('SetupStruc','var'))
     [s,sOri,Unmix_s,~] = readData(Angle,ISM_setup);
 else
@@ -19,14 +19,14 @@ method = {'DSB'                0;
           'LCMV_AESB'          0;
           'LCMV_Search'        0;
           'ICA_funda'          0;
-          'ICA_initial'        1;
-          'ICA_Sawada'         0;
+          'ICA_initial'        0;
+          'ICA_Sawada'         1;
           'IVA'                0;
           'AuxIVA'             0;
           'OverIVA'            0; %%% not working
           'maxSNR'             0;
           %%%%%%% Dereverberation
-          'WPE'                1;
+          'WPE'                0;
           %%%%%%% Compound method
           'cGMM_maxSNR'        0;
           'ALL'                0
