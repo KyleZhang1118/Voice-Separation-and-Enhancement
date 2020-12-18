@@ -33,11 +33,18 @@ end
 % Sort the eigenvalues - decending.
 [~,order] = sort(diag(D),'descend');
 
+%%%%%%%%%%%%%% Special Use
+% if(D(order(lastEig))<D(order(1))*rankTolerance && lastEig==size(vectors,1))
+%     covarianceMatrix = covarianceMatrix+eye(size(covarianceMatrix))*(max(eig(covarianceMatrix))*10^-2);
+%     [E, D] = eig (covarianceMatrix);
+%     [~,order] = sort(diag(D),'descend');
+% end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % See if the user has reduced the dimension enough
 
 % if lastEig < maxLastEig
-%     fprintf('��⵽ %d���ź�Դ \n',...
+%     fprintf('���? %d���ź�Դ \n',...
 %            lastEig);
 %     num=lastEig;
 % else

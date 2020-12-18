@@ -37,7 +37,7 @@ end
 %%%%%% IVA iterations
 epsi = 1e-6;
 step_size = 0.1;
-max_iteration = 1000;
+max_iteration = 200;
 Y_k = zeros(Num,frame_N);
 % K_sp = sqrt(K_m);
 pObj = inf;
@@ -60,7 +60,7 @@ for iteration = 1:max_iteration
         W_IVA(:,:,i) = W;
         Y_f(:,:,i) = W*X_f;
     end
-    Obj = (sum(sum(Y_k))/frame_N-dlw)/(Num*K_m);
+    Obj = (sum(sum(Y_k))/frame_N-2*dlw)/(Num*K_m);
     dObj = pObj-Obj;
     pObj = Obj;
     A(iteration,:) = [Obj,abs(dObj)/abs(Obj)];

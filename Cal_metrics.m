@@ -24,22 +24,29 @@ for i = 1:method_num
             continue;
         end
         eval(strcat('[SDR,SIR,SAR,perm]=bss_eval_sources(Re.',method_name,'.S,sOri);'));
-        Us = FrePro(Unmix_s,eval(strcat('Re.',method_name,'.W;')),eval(strcat('SetupStruc.',method_name,';')));
-        for j = 1:Num
-            OutSIR(j) = CSNR(Us(:,:,j),j);
+        if(size(eval(strcat('Re.',method_name,'.W;')))>1)
+            Us = FrePro(Unmix_s,eval(strcat('Re.',method_name,'.W;')),eval(strcat('SetupStruc.',method_name,';')));
+            for j = 1:Num
+                OutSIR(j) = CSNR(Us(:,:,j),j);
+            end
+            ImproSIR = OutSIR-InSIR;
+            eval(strcat('Me.',method_name,'_ImproSIR=ImproSIR;'));
+            eval(strcat('Me.',method_name,'_OutSIR=OutSIR;'));
         end
-        ImproSIR = OutSIR-InSIR;
-        eval(strcat('Me.',method_name,'_ImproSIR=ImproSIR;'));
-        eval(strcat('Me.',method_name,'_OutSIR=OutSIR;'));
         eval(strcat('Me.',method_name,'_SDR=SDR;'));
         eval(strcat('Me.',method_name,'_SIR=SIR;'));
         eval(strcat('Me.',method_name,'_SAR=SAR;'));
         if(sign_plot==1)
-            S_c = zeros(size(Us,1),Num);
-            for j = 1:Num
-                S_c(:,j) = sum(Us(:,:,j),2);
+            if(size(eval(strcat('Re.',method_name,'.W;')))>1)
+                S_c = zeros(size(Us,1),Num);
+                for j = 1:Num
+                    S_c(:,j) = sum(Us(:,:,j),2);
+                end
+                autoPlot(S_c,method_name,SetupStruc.fs,roundn([ImproSIR OutSIR SDR SIR SAR],-2));
+            else
+                S_c = eval(strcat('Re.',method_name,'.S;'));
+                autoPlot(S_c,method_name,SetupStruc.fs,roundn([SDR SIR SAR],-2));
             end
-            autoPlot(S_c,method_name,SetupStruc.fs,roundn([ImproSIR OutSIR SDR SIR SAR],-2));
         end
     end
     if(isfield(ReStruc,'OnS'))

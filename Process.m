@@ -20,7 +20,7 @@ end
 %%%%
 Re.method = {};
 sign_plot = 0;      % Choosing whether plot the offline processing results
-sign_write = 0;      % Choosing whether generate the .wav file of results
+sign_write = 1;      % Choosing whether generate the .wav file of results
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(ismember('DSB',method) || ismember('ALL',method))
     SetupStruc.DSB.K = 512;                            %%%%% Adjustable coeficient 'K'
@@ -246,6 +246,20 @@ if(ismember('IVA',method) || ismember('ALL',method))
     end    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(ismember('IVA_Norm',method) || ismember('ALL',method))
+    SetupStruc.IVA_Norm.K = 2048;                            
+    SetupStruc.IVA_Norm.hop = round(SetupStruc.IVA_Norm.K/4);        
+    Transfer = Cal_transfer(SetupStruc,'IVA_Norm');
+    [Re.IVA_Norm.S,Re.IVA_Norm.W,SetupStruc] = Process_IVA_Norm(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'IVA_Norm'];
+    if(sign_plot == 1)
+        autoPlot(Re.IVA_Norm.S,'IVA_Norm',SetupStruc.fs);
+    end
+    if(sign_write == 1)
+        autoWrite(Re.IVA_Norm.S,SetupStruc.fs,'IVA_Norm');
+    end    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(ismember('AuxIVA',method) || ismember('ALL',method))
     SetupStruc.AuxIVA.K = 2048;                            
     SetupStruc.AuxIVA.hop = round(SetupStruc.AuxIVA.K/4);        
@@ -274,8 +288,92 @@ if(ismember('OverIVA',method) || ismember('ALL',method))
     end    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(ismember('ILRMA_IVA',method) || ismember('ALL',method))
+    SetupStruc.ILRMA_IVA.K = 2048;                            
+    SetupStruc.ILRMA_IVA.hop = round(SetupStruc.ILRMA_IVA.K/4);        
+    Transfer = Cal_transfer(SetupStruc,'ILRMA_IVA');
+    [Re.ILRMA_IVA.S,Re.ILRMA_IVA.W,SetupStruc] = Process_ILRMA_IVA(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'ILRMA_IVA'];
+    if(sign_plot == 1)
+        autoPlot(Re.ILRMA_IVA.S,'ILRMA_IVA',SetupStruc.fs);
+    end
+    if(sign_write == 1)
+        autoWrite(Re.ILRMA_IVA.S,SetupStruc.fs,'ILRMA_IVA');
+    end    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(ismember('ILRMA',method) || ismember('ALL',method))
+    SetupStruc.ILRMA.K = 2048;                            
+    SetupStruc.ILRMA.hop = round(SetupStruc.ILRMA.K/4);        
+    Transfer = Cal_transfer(SetupStruc,'ILRMA');
+    [Re.ILRMA.S,Re.ILRMA.W,SetupStruc] = Process_ILRMA(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'ILRMA'];
+    if(sign_plot == 1)
+        autoPlot(Re.ILRMA.S,'ILRMA',SetupStruc.fs);
+    end
+    if(sign_write == 1)
+        autoWrite(Re.ILRMA.S,SetupStruc.fs,'ILRMA');
+    end    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(ismember('ILRMA_PF',method) || ismember('ALL',method))
+    SetupStruc.ILRMA_PF.K = 2048;                            
+    SetupStruc.ILRMA_PF.hop = round(SetupStruc.ILRMA_PF.K/4);        
+    Transfer = Cal_transfer(SetupStruc,'ILRMA_PF');
+    [Re.ILRMA_PF.S,Re.ILRMA_PF.W,SetupStruc] = Process_ILRMA_PF(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'ILRMA_PF'];
+    if(sign_plot == 1)
+        autoPlot(Re.ILRMA_PF.S,'ILRMA_PF',SetupStruc.fs);
+    end
+    if(sign_write == 1)
+        autoWrite(Re.ILRMA_PF.S,SetupStruc.fs,'ILRMA_PF');
+    end    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(ismember('FastMNMF1',method) || ismember('ALL',method))
+    SetupStruc.FastMNMF1.K = 2048;                            
+    SetupStruc.FastMNMF1.hop = round(SetupStruc.FastMNMF1.K/4);        
+    Transfer = Cal_transfer(SetupStruc,'FastMNMF1');
+    [Re.FastMNMF1.S,Re.FastMNMF1.W,SetupStruc] = Process_FastMNMF1(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'FastMNMF1'];
+    if(sign_plot == 1)
+        autoPlot(Re.FastMNMF1.S,'FastMNMF1',SetupStruc.fs);
+    end
+    if(sign_write == 1)
+        autoWrite(Re.FastMNMF1.S,SetupStruc.fs,'FastMNMF1');
+    end    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(ismember('FastMNMF2',method) || ismember('ALL',method))
+    SetupStruc.FastMNMF2.K = 2048;                            
+    SetupStruc.FastMNMF2.hop = round(SetupStruc.FastMNMF2.K/4);        
+    Transfer = Cal_transfer(SetupStruc,'FastMNMF2');
+    [Re.FastMNMF2.S,Re.FastMNMF2.W,SetupStruc] = Process_FastMNMF2(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'FastMNMF2'];
+    if(sign_plot == 1)
+        autoPlot(Re.FastMNMF2.S,'FastMNMF2',SetupStruc.fs);
+    end
+    if(sign_write == 1)
+        autoWrite(Re.FastMNMF2.S,SetupStruc.fs,'FastMNMF2');
+    end    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(ismember('FastFCA_AS',method) || ismember('ALL',method))
+    SetupStruc.FastFCA_AS.K = 1024;                            
+    SetupStruc.FastFCA_AS.hop = round(SetupStruc.FastFCA_AS.K/2);        
+    Transfer = Cal_transfer(SetupStruc,'FastFCA_AS');
+    [Re.FastFCA_AS.S,Re.FastFCA_AS.W,SetupStruc] = Process_FastFCA_AS(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'FastFCA_AS'];
+    if(sign_plot == 1)
+        autoPlot(Re.FastFCA_AS.S,'FastFCA_AS',SetupStruc.fs);
+    end
+    if(sign_write == 1)
+        autoWrite(Re.FastFCA_AS.S,SetupStruc.fs,'FastFCA_AS');
+    end    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(ismember('maxSNR',method) || ismember('ALL',method))
-    SetupStruc.maxSNR.K = 4096;                            
+    SetupStruc.maxSNR.K = 1024;                            
     SetupStruc.maxSNR.hop = round(SetupStruc.maxSNR.K/4);        
     Transfer = Cal_transfer(SetupStruc,'maxSNR');
     [Re.maxSNR.S,Re.maxSNR.W,SetupStruc] = Process_maxSNR(s,Transfer,SetupStruc);

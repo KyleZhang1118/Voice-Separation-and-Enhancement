@@ -17,7 +17,7 @@ Y_f = zeros(Num,frame_N,K);
 %%%%%%%%%%%%%%%%%%%%%%%%%% Obtain processing matrix 'W'
 W_IVA = zeros(Num,N,K_m);
 W_Over = zeros(N,N,K_m);
-theta = 10^-4;
+theta = 10^-6;
 X = permute(X,[3 2 1]);
 E1 = [eye(Num) zeros(Num,N-Num)];
 E2 = [zeros(N-Num,Num) eye(N-Num)];
@@ -33,7 +33,7 @@ for i = 1:K_m
     Cf = X_f*X_f'/frame_N;
     Jf = E1*Cf*W';
     if rcond(Jf)<theta
-       Jf = Jf+eye(Num)*min(eig(Jf))*theta;
+       Jf = Jf+eye(Num)*max(eig(Jf))*theta;
     end
     Jf = E2*Cf*W'/Jf;
     W_ = [W;[Jf -eye(N-Num)]];
@@ -43,7 +43,7 @@ for i = 1:K_m
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% IVA iterations
-max_iteration = 100;
+max_iteration = 200;
 Y_k = zeros(Num,frame_N);
 epsi = 1e-6;
 pObj = inf;
@@ -65,8 +65,8 @@ for iteration = 1:max_iteration
             G_ = repmat(G_,N,1);
             Vk = (G_.*X_f)*X_f'/frame_N;
             if rcond(Vk)<theta
-                coe = sort(eig(Vk),'descend');
-                Vk = Vk+eye(N)*coe(Num)*theta;
+%                 coe = sort(eig(Vk),'descend');
+                Vk = Vk+eye(N)*max(eig(Vk))*theta;
             end
             wk = inv(W_*Vk);
             wk = wk(:,i_n);
@@ -74,12 +74,13 @@ for iteration = 1:max_iteration
             W(i_n,:) = wk';
             Jf = E1*Cf*W';
             if rcond(Jf)<theta
-                Jf = Jf+eye(Num)*min(eig(Jf))*theta;
+                Jf = Jf+eye(Num)*max(eig(Jf))*theta;
             end
             Jf = E2*Cf*W'/Jf;
             W_ = [W;[Jf -eye(N-Num)]];
         end
         W_IVA(:,:,i) = W;
+        W_Over(:,:,i) = W_;
         Y_f(:,:,i) = W*X_f;
     end
     Obj = (sum(sum(Y_k))/frame_N-dlw)/(Num*K_m);

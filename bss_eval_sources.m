@@ -51,7 +51,7 @@ SIR=zeros(nsrc,nsrc);
 SAR=zeros(nsrc,nsrc);
 for jest=1:nsrc
     for jtrue=1:nsrc
-        [s_true,e_spat,e_interf,e_artif]=bss_decomp_mtifilt(se(jest,:),s,jtrue,128);%%%the length of filter,origin 512, adjusting to 64
+        [s_true,e_spat,e_interf,e_artif]=bss_decomp_mtifilt(se(jest,:),s,jtrue,512);%%%the length of filter,origin 512, adjusting to 64
         [SDR(jest,jtrue),SIR(jest,jtrue),SAR(jest,jtrue)]=bss_source_crit(s_true,e_spat,e_interf,e_artif);
     end
 end

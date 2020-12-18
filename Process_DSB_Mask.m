@@ -36,5 +36,5 @@ end
 for i = 1:Num
     Y(:,i) = overlapadd(real(ifft(Y_f(:,:,i)))',win,hop);
 end
-
+W = 0;
 return;
