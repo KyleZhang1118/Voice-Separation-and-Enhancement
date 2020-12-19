@@ -36,7 +36,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% ILRMA iterations
 epsi = 1e-6;
-max_iteration = 300;
+max_iteration = 200;
 L = 2;  %%%%% the number of NMF basis
 T = max(rand(K_m,L,Num),epsi);
 V = max(rand(L,frame_N,Num),epsi);
@@ -66,7 +66,7 @@ for iteration = 1:max_iteration
         dlw = dlw +log(abs(det(W))+epsi); 
         y_f = Y_f(:,:,i);
         G_ = permute(R(i,:,:),[3 2 1]);
-        y_fun = y_f./sqrt(G_+epsi);
+        y_fun = y_f./(G_+epsi);
         core = eye(size(W))-y_fun*y_f'/frame_N;
         W = W+step_size*core*W;
         W_ILRMA_IVA(:,:,i) = W;

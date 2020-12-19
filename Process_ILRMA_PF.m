@@ -90,7 +90,7 @@ for iteration = 1:max_iteration
        dlw = dlw +log(abs(det(W))+epsi);
         for i_n = 1:Num
             G_ = permute(R(i,:,i_n),[3 2 1]);
-            G_ = repmat(sqrt(G_),Num,1);
+            G_ = repmat(G_+epsi,Num,1);
             Vk = (X_f./G_)*X_f'/frame_N;
             if rcond(Vk)<theta
                 Vk = Vk+eye(Num)*min(eig(Vk))*theta;

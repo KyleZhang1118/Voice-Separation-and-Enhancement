@@ -36,7 +36,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% ILRMA iterations
 epsi = 1e-6;
-max_iteration = 300;
+max_iteration = 200;
 L = 2;  %%%%% the number of NMF basis
 T = max(rand(K_m,L,Num),epsi);
 V = max(rand(L,frame_N,Num),epsi);
@@ -67,14 +67,14 @@ for iteration = 1:max_iteration
 %         %%%%% IVA
 %         y_f = Y_f(:,:,i);
 %         G_ = permute(R(i,:,:),[3 2 1]);
-%         y_fun = y_f./sqrt(G_);
+%         y_fun = y_f./(G_+epsi);
 %         core = eye(size(W))-y_fun*y_f'/frame_N;
 %         W = W+step_size*core*W;
         %%%%% IP of AuxIVA
         for i_n = 1:Num
 %             G_ = Y_k(i_n,:).^-1;
             G_ = permute(R(i,:,i_n),[3 2 1]);
-            G_ = repmat(sqrt(G_),Num,1);
+            G_ = repmat(G_+epsi,Num,1);
             Vk = (X_f./G_)*X_f'/frame_N;
             if rcond(Vk)<theta
                 Vk = Vk+eye(Num)*max(eig(Vk))*theta;
