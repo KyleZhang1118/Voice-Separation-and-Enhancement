@@ -20,7 +20,7 @@ end
 %%%%
 Re.method = {};
 sign_plot = 0;      % Choosing whether plot the offline processing results
-sign_write = 1;      % Choosing whether generate the .wav file of results
+sign_write = 0;      % Choosing whether generate the .wav file of results
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(ismember('DSB',method) || ismember('ALL',method))
     SetupStruc.DSB.K = 512;                            %%%%% Adjustable coeficient 'K'
@@ -246,17 +246,17 @@ if(ismember('IVA',method) || ismember('ALL',method))
     end    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if(ismember('IVA_Norm',method) || ismember('ALL',method))
-    SetupStruc.IVA_Norm.K = 2048;                            
-    SetupStruc.IVA_Norm.hop = round(SetupStruc.IVA_Norm.K/4);        
-    Transfer = Cal_transfer(SetupStruc,'IVA_Norm');
-    [Re.IVA_Norm.S,Re.IVA_Norm.W,SetupStruc] = Process_IVA_Norm(s,Transfer,SetupStruc);
-    Re.method = [Re.method;'IVA_Norm'];
+if(ismember('IVA_woDR',method) || ismember('ALL',method))
+    SetupStruc.IVA_woDR.K = 2048;                            
+    SetupStruc.IVA_woDR.hop = round(SetupStruc.IVA_woDR.K/4);        
+    Transfer = Cal_transfer(SetupStruc,'IVA_woDR');
+    [Re.IVA_woDR.S,Re.IVA_woDR.W,SetupStruc] = Process_IVA_woDR(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'IVA_woDR'];
     if(sign_plot == 1)
-        autoPlot(Re.IVA_Norm.S,'IVA_Norm',SetupStruc.fs);
+        autoPlot(Re.IVA_woDR.S,'IVA_woDR',SetupStruc.fs);
     end
     if(sign_write == 1)
-        autoWrite(Re.IVA_Norm.S,SetupStruc.fs,'IVA_Norm');
+        autoWrite(Re.IVA_woDR.S,SetupStruc.fs,'IVA_woDR');
     end    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -288,17 +288,17 @@ if(ismember('OverIVA',method) || ismember('ALL',method))
     end    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if(ismember('ILRMA_IVA',method) || ismember('ALL',method))
-    SetupStruc.ILRMA_IVA.K = 2048;                            
-    SetupStruc.ILRMA_IVA.hop = round(SetupStruc.ILRMA_IVA.K/4);        
-    Transfer = Cal_transfer(SetupStruc,'ILRMA_IVA');
-    [Re.ILRMA_IVA.S,Re.ILRMA_IVA.W,SetupStruc] = Process_ILRMA_IVA(s,Transfer,SetupStruc);
-    Re.method = [Re.method;'ILRMA_IVA'];
+if(ismember('ILRMA_woDR',method) || ismember('ALL',method))
+    SetupStruc.ILRMA_woDR.K = 2048;                            
+    SetupStruc.ILRMA_woDR.hop = round(SetupStruc.ILRMA_woDR.K/4);        
+    Transfer = Cal_transfer(SetupStruc,'ILRMA_woDR');
+    [Re.ILRMA_woDR.S,Re.ILRMA_woDR.W,SetupStruc] = Process_ILRMA_woDR(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'ILRMA_woDR'];
     if(sign_plot == 1)
-        autoPlot(Re.ILRMA_IVA.S,'ILRMA_IVA',SetupStruc.fs);
+        autoPlot(Re.ILRMA_woDR.S,'ILRMA_woDR',SetupStruc.fs);
     end
     if(sign_write == 1)
-        autoWrite(Re.ILRMA_IVA.S,SetupStruc.fs,'ILRMA_IVA');
+        autoWrite(Re.ILRMA_woDR.S,SetupStruc.fs,'ILRMA_woDR');
     end    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

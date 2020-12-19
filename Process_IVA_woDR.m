@@ -1,9 +1,9 @@
-function [Y,W,SetupStruc] = Process_IVA_Norm(s,Transfer,SetupStruc)
-K = SetupStruc.IVA_Norm.K;
-hop = SetupStruc.IVA_Norm.hop;
+function [Y,W,SetupStruc] = Process_IVA_woDR(s,Transfer,SetupStruc)
+K = SetupStruc.IVA_woDR.K;
+hop = SetupStruc.IVA_woDR.hop;
 win = hanning(K,'periodic');
 win = win/sqrt(sum(win(1:hop:K).^2));
-SetupStruc.IVA_Norm.win = win;  % Preserve 'win' in 'SetupStruc'
+SetupStruc.IVA_woDR.win = win;  % Preserve 'win' in 'SetupStruc'
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 N = size(s,2);
 for i = 1:N
