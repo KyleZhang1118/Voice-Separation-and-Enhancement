@@ -161,7 +161,7 @@ for i = 1:N
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Graudal iterations
-max_iteration = 300;
+max_iteration = 150;
 pObj = inf;
 A = zeros(1001,2)-1; %%%% Show the decrease of the value of cost funtion, ILRMA max iterations 1000
 for iteration = 1:max_iteration

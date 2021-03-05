@@ -108,11 +108,11 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % for i = 1:Num
 %     figure
-%     imagesc(flipud(R(:,:,i)/max(max(R(:,:,i))+epsi)))    
+%     imagesc(flipud(sqrt(R(:,:,i)/max(max(R(:,:,i))+epsi))))    
 % end
 % for i = 1:Num
 %     figure
-%     imagesc(flipud(P(:,:,i)/max(max(P(:,:,i))+epsi)))
+%     imagesc(flipud(sqrt(P(:,:,i)/max(max(P(:,:,i))+epsi))))
 % end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Post processing
