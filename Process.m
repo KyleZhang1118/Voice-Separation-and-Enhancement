@@ -20,7 +20,7 @@ end
 %%%%
 Re.method = {};
 sign_plot = 0;      % Choosing whether plot the offline processing results
-sign_write = 0;      % Choosing whether generate the .wav file of results
+sign_write = 1;      % Choosing whether generate the .wav file of results
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(ismember('DSB',method) || ismember('ALL',method))
     SetupStruc.DSB.K = 512;                            %%%%% Adjustable coeficient 'K'

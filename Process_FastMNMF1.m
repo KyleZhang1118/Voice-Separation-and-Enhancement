@@ -15,7 +15,7 @@ Num = size(Transfer,3);
 Y = zeros((frame_N-1)*hop+K,Num);
 Y_f = zeros(Num,frame_N,K);
 %%%%%%%%%%%%%%%%%%%%%%%%%% First initialization
-epsi = 1e-6;
+epsi = 1e-10;
 L = 2;        %%%%% the initial number of NMF basis
 X_sp = zeros(K_m,frame_N,N);
 Y_sp = zeros(K_m,frame_N,N);
@@ -161,7 +161,7 @@ for i = 1:N
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Graudal iterations
-max_iteration = 300;
+max_iteration = 150;
 pObj = inf;
 A = zeros(1001,2)-1; %%%% Show the decrease of the value of cost funtion, ILRMA max iterations 1000
 for iteration = 1:max_iteration
@@ -230,7 +230,7 @@ for iteration = 1:max_iteration
     pObj = Obj;
     A(iteration,:) = [Obj,abs(dObj)/abs(Obj)];
     if(abs(dObj)/abs(Obj)<theta)
-       break;
+%        break;
     end
     %%%%%%%% Adjust the scales
     for i = 1:K_m
@@ -270,7 +270,7 @@ for i = 1:K_m
             lamdag(i_N,:) = lamda(i,i_T,i_N)*G(i_N,:,i);
         end
         for i_N = 1:Num
-            Y_f(i_N,i_T,i) = Q_ii(1,:)*diag(lamdag(i_N,:)./sum(lamdag))*Q(:,:,i)*X_f(:,i_T);
+            Y_f(i_N,i_T,i) = Q_ii(1,:)*diag(lamdag(i_N,:)./(sum(lamdag)+epsi))*Q(:,:,i)*X_f(:,i_T);
         end
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
