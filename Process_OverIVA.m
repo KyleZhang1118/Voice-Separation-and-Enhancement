@@ -51,7 +51,7 @@ A = zeros(1001,2)-1; %%%% Show the decrease of non-linear correlation, IVA max i
 for iteration = 1:max_iteration
     for i = 1:Num
         y_temp = permute(Y_f(i,:,:),[3 2 1]);
-        Y_k(i,:) = sqrt(sum(abs(y_temp(1:K_m,:)).^2))+epsi;
+        Y_k(i,:) = mean(abs(y_temp(1:K_m,:)).^2)+epsi;
     end
     dlw = 0;
     for i = 1:K_m
@@ -87,9 +87,9 @@ for iteration = 1:max_iteration
     dObj = pObj-Obj;
     pObj = Obj;
     A(iteration,:) = [Obj,abs(dObj)/abs(Obj)];
-%     if(abs(dObj)/abs(Obj)<epsi)
-%         break;
-%     end
+    if(abs(dObj)/abs(Obj)<epsi)
+        break;
+    end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Post processing

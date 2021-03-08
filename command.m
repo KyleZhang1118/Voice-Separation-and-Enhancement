@@ -21,14 +21,14 @@ method = {'DSB'                0;
           'ICA_funda'          0;
           'ICA_initial'        0;
           'ICA_Sawada'         0;
-          'IVA'                1;
+          'IVA'                0;
           'IVA_woDR'           0;
-          'AuxIVA'             1;
+          'AuxIVA'             0;
           'OverIVA'            0; 
           'ILRMA_woDR'         0;
-          'ILRMA'              1;
+          'ILRMA'              0;
           'ILRMA_PF'           0;
-          'FastMNMF1'          0;
+          'FastMNMF1'          1;
           'FastMNMF2'          0;
           'FastFCA_AS'         0; %%%% remaining to be finished
           'maxSNR'             0;
