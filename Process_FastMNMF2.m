@@ -14,15 +14,14 @@ frame_N = size(X,2);
 K_m = K/2+1;
 Num = size(Transfer,3);
 Y = zeros((frame_N-1)*hop+K,Num);
-% Y_f = permute(X,[3 2 1]);
+Y_f = permute(X,[3 2 1]);
 %%%%%%%%%%%%%%%%%%%%%%%%%% First initialization
-epsi = 1e-10;
+epsi = 1e-6;
 L = 2;        %%%%% the initial number of NMF basis
 X_sp = zeros(K_m,frame_N,N);
 Y_sp = zeros(K_m,frame_N,N);
 T = max(rand(K_m,L,Num),epsi);
 V = max(rand(L,frame_N,Num),epsi);
-% G = eye(Num,N);
 G = max(eye(Num,N),0.01);
 if(N>Num)
     i = Num+1;
@@ -36,13 +35,19 @@ if(N>Num)
         end
     end
 end
+G = G./repmat(sum(G,2),[1,N]);
+G_scale = max(sum(G));
 Q = eye(N);
 Q = repmat(Q,1,1,K_m);
 theta = 10^-6;
+X_Norm = X;
 for i = 1:K_m
     X_f = permute(X(i,:,:),[3 2 1]);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%% Initialization 
+    %%% Initialization
+    X_f = X_f./repmat(max(max(abs(X_f),[],2),epsi),[1,frame_N]);
+    X_f = X_f*G_scale;
+    X_Norm(i,:,:) = X_f.';
     X_temp = abs(Q(:,:,i)*X_f).^2;
     X_sp(i,:,:) = X_temp'; 
 end
@@ -56,10 +61,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Graudal iterations
 % max_iteration = 1000;
-pObj = inf;
+% pObj = inf;
 % step_size = 0.1;
-A = zeros(1001,2)-1; %%%% Show the decrease of the value of cost funtion, ILRMA max iterations 1000
-for iteration = 1:50
+% A = zeros(1001,2)-1; %%%% Show the decrease of the value of cost funtion, ILRMA max iterations 1000
+for iteration = 1:100
     %%%%% MU of NMF 
     for i = 1:Num
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Update T
@@ -92,11 +97,11 @@ for iteration = 1:50
         end
     end
     %%%%% IP of AuxIVA
-    dlw = 0;
+%     dlw = 0;
     for i = 1:K_m
-        X_f = permute(X(i,:,:),[3 2 1]);
-        dlw = dlw +log(abs(det(Q(:,:,i)))+epsi);
-        %%%%% IVA
+        X_f = permute(X_Norm(i,:,:),[3 2 1]);
+%         dlw = dlw +log(abs(det(Q(:,:,i)))+epsi);
+%         %%%%% IVA
 %         W = Q(:,:,i);
 %         y_f = Y_f(:,:,i);
 %         G_ = permute(Y_sp(i,:,:),[3 2 1]);
@@ -104,7 +109,7 @@ for iteration = 1:50
 %         core = eye(size(W))-y_fun*y_f'/frame_N;
 %         Q(:,:,i) = W+step_size*core*W;
 %         Y_f(:,:,i) = Q(:,:,i)*X_f;
-%         %%%%% AuxIVA
+        %%%%% AuxIVA
         for i_n = 1:N
             G_ = permute(Y_sp(i,:,i_n),[3 2 1]);
             G_ = repmat(sqrt(G_),N,1);
@@ -120,13 +125,13 @@ for iteration = 1:50
         X_temp = abs(Q(:,:,i)*X_f).^2;
         X_sp(i,:,:) = X_temp'; 
     end
-    Obj = ((sum(sum(sum(log(Y_sp+epsi))))+sum(sum(sum(X_sp./(Y_sp+epsi)))))/frame_N-2*dlw)/(Num*K_m);
-    dObj = pObj-Obj;
-    pObj = Obj;
-    A(iteration,:) = [Obj,abs(dObj)/abs(Obj)];
-    if(abs(dObj)/abs(Obj)<theta)
+%     Obj = ((sum(sum(sum(log(Y_sp+epsi))))+sum(sum(sum(X_sp./(Y_sp+epsi)))))/frame_N-2*dlw)/(Num*K_m);
+%     dObj = pObj-Obj;
+%     pObj = Obj;
+%     A(iteration,:) = [Obj,abs(dObj)/abs(Obj)];
+%     if(abs(dObj)/abs(Obj)<theta)
 %        break;
-    end
+%     end
     %%%%%%%% Adjust the scales
     for i = 1:K_m
         miu = trace(Q(:,:,i)*Q(:,:,i)')/N;
@@ -139,7 +144,7 @@ for iteration = 1:50
         T(:,:,i) = T(:,:,i)*phi;
     end
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Iteration with larger L
 L = 16;        %%%%% the initial number of NMF basis
 Y_sp = zeros(K_m,frame_N,N);
@@ -194,11 +199,20 @@ for iteration = 1:max_iteration
     %%%%% IP of AuxIVA
     dlw = 0;
     for i = 1:K_m
-        X_f = permute(X(i,:,:),[3 2 1]);
+        X_f = permute(X_Norm(i,:,:),[3 2 1]);
         dlw = dlw +log(abs(det(Q(:,:,i)))+epsi);
+%         %%%%% IVA
+%         W = Q(:,:,i);
+%         y_f = Y_f(:,:,i);
+%         G_ = permute(Y_sp(i,:,:),[3 2 1]);
+%         y_fun = y_f./sqrt(G_+epsi);
+%         core = eye(size(W))-y_fun*y_f'/frame_N;
+%         Q(:,:,i) = W+step_size*core*W;
+%         Y_f(:,:,i) = Q(:,:,i)*X_f;
+        %%%%% AuxIVA
         for i_n = 1:N
             G_ = permute(Y_sp(i,:,i_n),[3 2 1]);
-            G_ = repmat(G_,N,1);
+            G_ = repmat(sqrt(G_),N,1);
             Vk = (X_f./(G_+epsi))*X_f'/frame_N;
             if rcond(Vk)<theta
                 Vk = Vk+eye(N)*max(eig(Vk))*theta;
@@ -211,13 +225,13 @@ for iteration = 1:max_iteration
         X_temp = abs(Q(:,:,i)*X_f).^2;
         X_sp(i,:,:) = X_temp'; 
     end
-    Obj = ((sum(sum(sum(log(Y_sp+epsi))))+sum(sum(sum(X_sp./Y_sp))))/frame_N-2*dlw)/(Num*K_m);
+    Obj = ((sum(sum(sum(log(Y_sp+epsi))))+sum(sum(sum(X_sp./(Y_sp+epsi)))))/frame_N-2*dlw)/(Num*K_m);
     dObj = pObj-Obj;
     pObj = Obj;
     A(iteration,:) = [Obj,abs(dObj)/abs(Obj)];
-    if(abs(dObj)/abs(Obj)<theta)
+%     if(abs(dObj)/abs(Obj)<theta)
 %        break;
-    end
+%     end
     %%%%%%%% Adjust the scales
     for i = 1:K_m
         miu = trace(Q(:,:,i)*Q(:,:,i)')/N;

@@ -15,7 +15,7 @@ Num = size(Transfer,3);
 Y = zeros((frame_N-1)*hop+K,Num);
 Y_f = zeros(Num,frame_N,K);
 %%%%%%%%%%%%%%%%%%%%%%%%%% First initialization
-epsi = 1e-10;
+epsi = 1e-6;
 L = 2;        %%%%% the initial number of NMF basis
 X_sp = zeros(K_m,frame_N,N);
 Y_sp = zeros(K_m,frame_N,N);
@@ -34,14 +34,20 @@ if(N>Num)
         end
     end
 end
+G = G./repmat(sum(G,2),[1,N]);
+G_scale = max(sum(G));
 G = repmat(G,1,1,K_m);
 Q = eye(N);
 Q = repmat(Q,1,1,K_m);
 theta = 10^-6;
+X_Norm = X;
 for i = 1:K_m
     X_f = permute(X(i,:,:),[3 2 1]);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%% Initialization 
+    %%% Initialization
+    X_f = X_f./repmat(max(max(abs(X_f),[],2),epsi),[1,frame_N]);
+    X_f = X_f*G_scale;
+    X_Norm(i,:,:) = X_f.';
     X_temp = abs(Q(:,:,i)*X_f).^2;
     X_sp(i,:,:) = X_temp'; 
 end
@@ -103,7 +109,7 @@ for iteration = 1:50
     %%%%% IP of AuxIVA
 %     dlw = 0;
     for i = 1:K_m
-        X_f = permute(X(i,:,:),[3 2 1]);
+        X_f = permute(X_Norm(i,:,:),[3 2 1]);
 %         dlw = dlw +log(abs(det(Q(:,:,i)))+epsi);
         for i_n = 1:N
             G_ = permute(Y_sp(i,:,i_n),[3 2 1]);
@@ -208,7 +214,7 @@ for iteration = 1:max_iteration
     %%%%% IP of AuxIVA
     dlw = 0;
     for i = 1:K_m
-        X_f = permute(X(i,:,:),[3 2 1]);
+        X_f = permute(X_Norm(i,:,:),[3 2 1]);
         dlw = dlw +log(abs(det(Q(:,:,i)))+epsi);
         for i_n = 1:N
             G_ = permute(Y_sp(i,:,i_n),[3 2 1]);
@@ -229,9 +235,9 @@ for iteration = 1:max_iteration
     dObj = pObj-Obj;
     pObj = Obj;
     A(iteration,:) = [Obj,abs(dObj)/abs(Obj)];
-    if(abs(dObj)/abs(Obj)<theta)
+%     if(abs(dObj)/abs(Obj)<theta)
 %        break;
-    end
+%     end
     %%%%%%%% Adjust the scales
     for i = 1:K_m
         for i_N = 1:N
@@ -270,7 +276,7 @@ for i = 1:K_m
             lamdag(i_N,:) = lamda(i,i_T,i_N)*G(i_N,:,i);
         end
         for i_N = 1:Num
-            Y_f(i_N,i_T,i) = Q_ii(1,:)*diag(lamdag(i_N,:)./(sum(lamdag)+epsi))*Q(:,:,i)*X_f(:,i_T);
+            Y_f(i_N,i_T,i) = Q_ii(1,:)*diag(lamdag(i_N,:)./sum(lamdag))*Q(:,:,i)*X_f(:,i_T);
         end
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
