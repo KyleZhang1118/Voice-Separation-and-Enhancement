@@ -14,9 +14,9 @@ frame_N = size(X,2);
 K_m = K/2+1;
 Num = size(Transfer,3);
 Y = zeros((frame_N-1)*hop+K,Num);
-Y_f = permute(X,[3 2 1]);
+Y_f = zeros(Num,frame_N,K);
 %%%%%%%%%%%%%%%%%%%%%%%%%% First initialization
-epsi = 1e-6;
+epsi = 1e-7;
 L = 2;        %%%%% the initial number of NMF basis
 X_sp = zeros(K_m,frame_N,N);
 Y_sp = zeros(K_m,frame_N,N);
@@ -36,7 +36,7 @@ if(N>Num)
     end
 end
 G = G./repmat(sum(G,2),[1,N]);
-G_scale = max(sum(G));
+G = G/max(sum(G));
 Q = eye(N);
 Q = repmat(Q,1,1,K_m);
 theta = 10^-6;
@@ -46,7 +46,6 @@ for i = 1:K_m
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% Initialization
     X_f = X_f./repmat(max(max(abs(X_f),[],2),epsi),[1,frame_N]);
-    X_f = X_f*G_scale;
     X_Norm(i,:,:) = X_f.';
     X_temp = abs(Q(:,:,i)*X_f).^2;
     X_sp(i,:,:) = X_temp'; 
@@ -60,16 +59,14 @@ for i = 1:N
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Graudal iterations
-% max_iteration = 1000;
 % pObj = inf;
-% step_size = 0.1;
 % A = zeros(1001,2)-1; %%%% Show the decrease of the value of cost funtion, ILRMA max iterations 1000
-for iteration = 1:100
+for iteration = 1:50
     %%%%% MU of NMF 
     for i = 1:Num
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Update T
         Gm = permute(repmat(G(i,:),K_m,1,frame_N),[1 3 2]);
-        T(:,:,i) = max(T(:,:,i).*sqrt((sum(Gm.*X_sp.*(Y_sp+epsi).^(-2),3)*V(:,:,i)')./(sum(Gm./(Y_sp+epsi),3)*V(:,:,i)')),epsi);
+        T(:,:,i) = max(T(:,:,i).*sqrt((sum(Gm.*X_sp.*Y_sp.^(-2),3)*V(:,:,i)')./max(sum(Gm./Y_sp,3)*V(:,:,i)',epsi)),epsi);
         for i_N = 1:N
             Y_temp = zeros(K_m,frame_N);
                 for i_Num = 1:Num
@@ -78,7 +75,7 @@ for iteration = 1:100
             Y_sp(:,:,i_N) = Y_temp;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Update V
-        V(:,:,i) = max(V(:,:,i).*sqrt((T(:,:,i)'*sum(Gm.*X_sp.*(Y_sp+epsi).^(-2),3))./(T(:,:,i)'*sum(Gm./(Y_sp+epsi),3))),epsi);
+        V(:,:,i) = max(V(:,:,i).*sqrt((T(:,:,i)'*sum(Gm.*X_sp.*Y_sp.^(-2),3))./max(T(:,:,i)'*sum(Gm./Y_sp,3),epsi)),epsi);
         for i_N = 1:N
             Y_temp = zeros(K_m,frame_N);
                 for i_Num = 1:Num
@@ -87,7 +84,7 @@ for iteration = 1:100
             Y_sp(:,:,i_N) = Y_temp;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Update G
-        G(i,:) = max(G(i,:).*permute(sqrt(sum(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N).*X_sp.*(Y_sp+epsi).^(-2)))./sum(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N)./(Y_sp+epsi)))),[1 3 2]),0.01);
+        G(i,:) = max(G(i,:).*permute(sqrt(sum(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N).*X_sp.*Y_sp.^(-2)))./max(sum(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N)./Y_sp)),epsi)),[1 3 2]),epsi);
         for i_N = 1:N
             Y_temp = zeros(K_m,frame_N);
                 for i_Num = 1:Num
@@ -101,14 +98,6 @@ for iteration = 1:100
     for i = 1:K_m
         X_f = permute(X_Norm(i,:,:),[3 2 1]);
 %         dlw = dlw +log(abs(det(Q(:,:,i)))+epsi);
-%         %%%%% IVA
-%         W = Q(:,:,i);
-%         y_f = Y_f(:,:,i);
-%         G_ = permute(Y_sp(i,:,:),[3 2 1]);
-%         y_fun = y_f./sqrt(G_+epsi);
-%         core = eye(size(W))-y_fun*y_f'/frame_N;
-%         Q(:,:,i) = W+step_size*core*W;
-%         Y_f(:,:,i) = Q(:,:,i)*X_f;
         %%%%% AuxIVA
         for i_n = 1:N
             G_ = permute(Y_sp(i,:,i_n),[3 2 1]);
@@ -143,6 +132,9 @@ for iteration = 1:100
         G(i,:) = G(i,:)/phi;
         T(:,:,i) = T(:,:,i)*phi;
     end
+    vv = sum(T,1);
+    T = T./repmat(vv,K_m,1,1);
+    V = V.*repmat(permute(vv,[2 1 3]),1,frame_N,1);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% Iteration with larger L
@@ -153,9 +145,7 @@ V = max(rand(L,frame_N,Num),epsi);
 for i = 1:N
     Y_temp = zeros(K_m,frame_N);
     for i_Num = 1:Num
-        G_temp = permute(G(i_Num,i,:),[3 1 2]);
-        TG = T(:,:,i_Num).*repmat(G_temp,1,L);
-        Y_temp = Y_temp+TG*V(:,:,i_Num);
+        Y_temp = Y_temp+T(:,:,i_Num)*V(:,:,i_Num)*G(i_Num,i);
     end
     Y_sp(:,:,i) = Y_temp;
 end
@@ -169,7 +159,7 @@ for iteration = 1:max_iteration
     for i = 1:Num
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Update T
         Gm = permute(repmat(G(i,:),K_m,1,frame_N),[1 3 2]);
-        T(:,:,i) = max(T(:,:,i).*sqrt((sum(Gm.*X_sp.*(Y_sp+epsi).^(-2),3)*V(:,:,i)')./(sum(Gm./(Y_sp+epsi),3)*V(:,:,i)')),epsi);
+        T(:,:,i) = max(T(:,:,i).*sqrt((sum(Gm.*X_sp.*Y_sp.^(-2),3)*V(:,:,i)')./max(sum(Gm./Y_sp,3)*V(:,:,i)',epsi)),epsi);
         for i_N = 1:N
             Y_temp = zeros(K_m,frame_N);
                 for i_Num = 1:Num
@@ -178,7 +168,7 @@ for iteration = 1:max_iteration
             Y_sp(:,:,i_N) = Y_temp;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Update V
-        V(:,:,i) = max(V(:,:,i).*sqrt((T(:,:,i)'*sum(Gm.*X_sp.*(Y_sp+epsi).^(-2),3))./(T(:,:,i)'*sum(Gm./(Y_sp+epsi),3))),epsi);
+        V(:,:,i) = max(V(:,:,i).*sqrt((T(:,:,i)'*sum(Gm.*X_sp.*Y_sp.^(-2),3))./max(T(:,:,i)'*sum(Gm./Y_sp,3),epsi)),epsi);
         for i_N = 1:N
             Y_temp = zeros(K_m,frame_N);
                 for i_Num = 1:Num
@@ -187,7 +177,7 @@ for iteration = 1:max_iteration
             Y_sp(:,:,i_N) = Y_temp;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Update G
-        G(i,:) = max(G(i,:).*permute(sqrt(sum(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N).*X_sp.*(Y_sp+epsi).^(-2)))./sum(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N)./(Y_sp+epsi)))),[1 3 2]),0.01);
+        G(i,:) = max(G(i,:).*permute(sqrt(sum(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N).*X_sp.*Y_sp.^(-2)))./max(sum(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N)./Y_sp)),epsi)),[1 3 2]),epsi);
         for i_N = 1:N
             Y_temp = zeros(K_m,frame_N);
                 for i_Num = 1:Num
@@ -201,14 +191,6 @@ for iteration = 1:max_iteration
     for i = 1:K_m
         X_f = permute(X_Norm(i,:,:),[3 2 1]);
         dlw = dlw +log(abs(det(Q(:,:,i)))+epsi);
-%         %%%%% IVA
-%         W = Q(:,:,i);
-%         y_f = Y_f(:,:,i);
-%         G_ = permute(Y_sp(i,:,:),[3 2 1]);
-%         y_fun = y_f./sqrt(G_+epsi);
-%         core = eye(size(W))-y_fun*y_f'/frame_N;
-%         Q(:,:,i) = W+step_size*core*W;
-%         Y_f(:,:,i) = Q(:,:,i)*X_f;
         %%%%% AuxIVA
         for i_n = 1:N
             G_ = permute(Y_sp(i,:,i_n),[3 2 1]);
@@ -232,7 +214,7 @@ for iteration = 1:max_iteration
 %     if(abs(dObj)/abs(Obj)<theta)
 %        break;
 %     end
-    %%%%%%%% Adjust the scales
+    %%%%%%% Adjust the scales
     for i = 1:K_m
         miu = trace(Q(:,:,i)*Q(:,:,i)')/N;
         Q(:,:,i) = Q(:,:,i)/sqrt(miu);
@@ -243,12 +225,14 @@ for iteration = 1:max_iteration
         G(i,:) = G(i,:)/phi;
         T(:,:,i) = T(:,:,i)*phi;
     end
+    vv = sum(T,1);
+    T = T./repmat(vv,K_m,1,1);
+    V = V.*repmat(permute(vv,[2 1 3]),1,frame_N,1);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Post processing
 % W = conj(permute(Transfer,[3 2 1]))/N;
 W = 0;
-Y_f = zeros(Num,frame_N,K);
 lamda = zeros(K_m,frame_N,Num);
 for i = 1:Num
     lamda(:,:,i) = T(:,:,i)*V(:,:,i);
@@ -266,7 +250,7 @@ for i = 1:K_m
             lamdag(i_N,:) = lamda(i,i_T,i_N)*G(i_N,:);
         end
         for i_N = 1:Num
-            Y_f(i_N,i_T,i) = Q_ii(1,:)*diag(lamdag(i_N,:)./sum(lamdag+epsi))*Q(:,:,i)*X_f(:,i_T);
+            Y_f(i_N,i_T,i) = Q_ii(1,:)*diag(lamdag(i_N,:)./sum(lamdag))*Q(:,:,i)*X_f(:,i_T);
         end
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

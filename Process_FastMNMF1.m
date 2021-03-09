@@ -15,7 +15,7 @@ Num = size(Transfer,3);
 Y = zeros((frame_N-1)*hop+K,Num);
 Y_f = zeros(Num,frame_N,K);
 %%%%%%%%%%%%%%%%%%%%%%%%%% First initialization
-epsi = 1e-6;
+epsi = 1e-7;
 L = 2;        %%%%% the initial number of NMF basis
 X_sp = zeros(K_m,frame_N,N);
 Y_sp = zeros(K_m,frame_N,N);
@@ -35,7 +35,7 @@ if(N>Num)
     end
 end
 G = G./repmat(sum(G,2),[1,N]);
-G_scale = max(sum(G));
+G = G/max(sum(G));
 G = repmat(G,1,1,K_m);
 Q = eye(N);
 Q = repmat(Q,1,1,K_m);
@@ -46,7 +46,6 @@ for i = 1:K_m
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% Initialization
     X_f = X_f./repmat(max(max(abs(X_f),[],2),epsi),[1,frame_N]);
-    X_f = X_f*G_scale;
     X_Norm(i,:,:) = X_f.';
     X_temp = abs(Q(:,:,i)*X_f).^2;
     X_sp(i,:,:) = X_temp'; 
@@ -72,7 +71,7 @@ for iteration = 1:50
         Gm = permute(G(i,:,:),[3 2 1]);
         Gm = repmat(Gm,1,1,frame_N);
         Gm = permute(Gm,[1 3 2]);
-        T(:,:,i) = max(T(:,:,i).*sqrt((sum(Gm.*X_sp.*Y_sp.^(-2),3)*V(:,:,i)')./(sum(Gm./Y_sp,3)*V(:,:,i)')),epsi);
+        T(:,:,i) = max(T(:,:,i).*sqrt((sum(Gm.*X_sp.*Y_sp.^(-2),3)*V(:,:,i)')./max(sum(Gm./Y_sp,3)*V(:,:,i)',epsi)),epsi);
         for i_N = 1:N
             Y_temp = zeros(K_m,frame_N);
                 for i_Num = 1:Num
@@ -83,7 +82,7 @@ for iteration = 1:50
             Y_sp(:,:,i_N) = Y_temp;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Update V
-        V(:,:,i) = max(V(:,:,i).*sqrt((T(:,:,i)'*sum(Gm.*X_sp.*Y_sp.^(-2),3))./(T(:,:,i)'*sum(Gm./Y_sp,3))),epsi);
+        V(:,:,i) = max(V(:,:,i).*sqrt((T(:,:,i)'*sum(Gm.*X_sp.*Y_sp.^(-2),3))./max(T(:,:,i)'*sum(Gm./Y_sp,3),epsi)),epsi);
         for i_N = 1:N
             Y_temp = zeros(K_m,frame_N);
                 for i_Num = 1:Num
@@ -95,7 +94,7 @@ for iteration = 1:50
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Update G
         Gn = permute(G(i,:,:),[2 3 1]);
-        G(i,:,:) = max(Gn.*sqrt(permute(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N).*X_sp.*Y_sp.^(-2),2),[3 1 2])./permute(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N)./Y_sp,2),[3 1 2])),0.01);
+        G(i,:,:) = max(Gn.*sqrt(permute(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N).*X_sp.*Y_sp.^(-2),2),[3 1 2])./permute(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N)./Y_sp,2),[3 1 2])),epsi);
         for i_N = 1:N
             Y_temp = zeros(K_m,frame_N);
                 for i_Num = 1:Num
@@ -177,7 +176,7 @@ for iteration = 1:max_iteration
         Gm = permute(G(i,:,:),[3 2 1]);
         Gm = repmat(Gm,1,1,frame_N);
         Gm = permute(Gm,[1 3 2]);
-        T(:,:,i) = max(T(:,:,i).*sqrt((sum(Gm.*X_sp.*Y_sp.^(-2),3)*V(:,:,i)')./(sum(Gm./Y_sp,3)*V(:,:,i)')),epsi);
+        T(:,:,i) = max(T(:,:,i).*sqrt((sum(Gm.*X_sp.*Y_sp.^(-2),3)*V(:,:,i)')./max(sum(Gm./Y_sp,3)*V(:,:,i)',epsi)),epsi);
         for i_N = 1:N
             Y_temp = zeros(K_m,frame_N);
                 for i_Num = 1:Num
@@ -188,7 +187,7 @@ for iteration = 1:max_iteration
             Y_sp(:,:,i_N) = Y_temp;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Update V
-        V(:,:,i) = max(V(:,:,i).*sqrt((T(:,:,i)'*sum(Gm.*X_sp.*Y_sp.^(-2),3))./(T(:,:,i)'*sum(Gm./Y_sp,3))),epsi);
+        V(:,:,i) = max(V(:,:,i).*sqrt((T(:,:,i)'*sum(Gm.*X_sp.*Y_sp.^(-2),3))./max(T(:,:,i)'*sum(Gm./Y_sp,3),epsi)),epsi);
         for i_N = 1:N
             Y_temp = zeros(K_m,frame_N);
                 for i_Num = 1:Num
@@ -200,7 +199,7 @@ for iteration = 1:max_iteration
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Update G
         Gn = permute(G(i,:,:),[2 3 1]);
-        G(i,:,:) = max(Gn.*sqrt(permute(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N).*X_sp.*Y_sp.^(-2),2),[3 1 2])./permute(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N)./Y_sp,2),[3 1 2])),0.01);
+        G(i,:,:) = max(Gn.*sqrt(permute(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N).*X_sp.*Y_sp.^(-2),2),[3 1 2])./permute(sum(repmat(T(:,:,i)*V(:,:,i),1,1,N)./Y_sp,2),[3 1 2])),epsi);
         for i_N = 1:N
             Y_temp = zeros(K_m,frame_N);
                 for i_Num = 1:Num
