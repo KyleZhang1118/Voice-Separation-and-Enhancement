@@ -288,6 +288,20 @@ if(ismember('OverIVA',method) || ismember('ALL',method))
     end    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(ismember('OverILRMA',method) || ismember('ALL',method))
+    SetupStruc.OverILRMA.K = 2048;                            
+    SetupStruc.OverILRMA.hop = round(SetupStruc.OverILRMA.K/4);        
+    Transfer = Cal_transfer(SetupStruc,'OverILRMA');
+    [Re.OverILRMA.S,Re.OverILRMA.W,SetupStruc] = Process_OverILRMA(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'OverILRMA'];
+    if(sign_plot == 1)
+        autoPlot(Re.OverILRMA.S,'OverILRMA',SetupStruc.fs);
+    end
+    if(sign_write == 1)
+        autoWrite(Re.OverILRMA.S,SetupStruc.fs,'OverILRMA');
+    end    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(ismember('ILRMA_woDR',method) || ismember('ALL',method))
     SetupStruc.ILRMA_woDR.K = 2048;                            
     SetupStruc.ILRMA_woDR.hop = round(SetupStruc.ILRMA_woDR.K/4);        
