@@ -29,3 +29,11 @@ In general, methods in beamforming use the steering vector or other spatial info
 5. CommandOnline.m and OnProcess.m designed for online methods which process input signals by blocks, not whole ,but seldom use and not updated frequently.  
 
 ## Details of methods realization(remained)  
+### Beamforming  
+#### DSB(Delay and sum)
+* DSB is the simplest method for speech enhancement by compensating the phase difference between the first channel and others in time-frequency domain.
+* DSB_Mask uses the steering vector of all sound sources, and is time-varying filter which use a post binary mask to only preserve the beam with the highest energy. The method is simple and effective to wipe off interference but lose the components fo target speech.  
+#### MVDR and LCMV
+* MVDR only use the steering vector of target source, while LCMV use all steering vectors to suppress the interference.  
+* MVDR_ESB and 
+
