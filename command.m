@@ -6,7 +6,7 @@ if(exist('SetupStruc','var'))
 else
     [s,sOri,Unmix_s,SetupStruc] = readData(Angle,ISM_setup);    % 's' is the muli-channel mixture signal,size:Length*7,
 end                                            % 'sOri' is the each single singal of the 1st channel corresponding to the angle,size:Length*N
-method = {'DSB'                0;
+method = {'DSB'                1;
           'DSB_Mask'           0;
           'MVDR'               0;
           'MVDR_ESB'           0;

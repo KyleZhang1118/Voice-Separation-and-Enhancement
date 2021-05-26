@@ -14,7 +14,11 @@ else
     channel_line = 1:Channel_Num;
 end
 for n = 1:Num
-    dataPath = 'simu_data/T60_';
+    if(SetupStruc.Height==1)
+        dataPath = 'simu_data/DifferentHeight/T60_';
+    else
+        dataPath = 'simu_data/SameHeight/T60_';
+    end
     for i = channel_line%0:Channel_Num-1
         wavName =strcat(dataPath,num2str(T60),'/',num2str(Angle(n)),'/Mic',num2str(i),'.wav');
         if(SetupStruc.Sign_Mid==1)
