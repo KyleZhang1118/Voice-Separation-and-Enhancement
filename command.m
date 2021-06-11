@@ -1,6 +1,6 @@
 clc;clear;
 close all;
-Angle = [90,315];                               %Angle,Options:90,135,180,270 plus:0,45,225,315
+Angle = [45,135];                               %Angle,Options:90,135,180,270 plus:0,45,225,315
 if(exist('SetupStruc','var'))
     [s,sOri,Unmix_s,~] = readData(Angle,ISM_setup);
 else
