@@ -101,7 +101,7 @@ for iteration = 1:50
         %%%%% AuxIVA
         for i_n = 1:N
             G_ = permute(Y_sp(i,:,i_n),[3 2 1]);
-            G_ = repmat(sqrt(G_),N,1);
+            G_ = repmat(G_,N,1);
             Vk = (X_f./(G_+epsi))*X_f'/frame_N;
             if rcond(Vk)<theta
                 Vk = Vk+eye(N)*max(eig(Vk))*theta;
@@ -194,7 +194,7 @@ for iteration = 1:max_iteration
         %%%%% AuxIVA
         for i_n = 1:N
             G_ = permute(Y_sp(i,:,i_n),[3 2 1]);
-            G_ = repmat(sqrt(G_),N,1);
+            G_ = repmat(G_,N,1);
             Vk = (X_f./(G_+epsi))*X_f'/frame_N;
             if rcond(Vk)<theta
                 Vk = Vk+eye(N)*max(eig(Vk))*theta;
