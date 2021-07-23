@@ -2,7 +2,7 @@ function P = Permu_Sawada(W,Y,SetupStruc,method)
 %%
 thA = 20; %% Angle/degree
 thU = 3; %% SIR/dB
-thU_mul = 10^(thU/10);
+thU_mul = 10^(thU/10); %if you dont wanna use 'DOA' method as the preprocessing of 'cor' method, set this to inf
 interval = 3; %% Field of cor/+-bins
 thcor = 0.7; %% Correlation
 thcor_single = 0.8;
@@ -23,7 +23,7 @@ for i = 1:interval
     Permu_NumL(K_m-i) = i+interval-1;
 end
 Rate_meth = zeros(K_m,4);
-%%%% I used the information of angle which should calculated by the inverse of W, this process is time-consuming. 
+%%%% I used the information of angle which should calculated by the inverse of W, and that process is time-consuming. 
 Angle = SetupStruc.Angle;
 Transfer = SetupStruc.Transfer;
 if(~exist('Angle','var'))
@@ -40,20 +40,59 @@ elseif(strcmp(method,'cor'))
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% DOA
-%%%%This is a simple realization without angle interval detection. 
+%%%%This is a simple realization without angle interval detection, so 'thA' has not been used.
 for i = 2:K_m
     trans = permute(Transfer(i,:,:),[2 3 1]);
     Pat_count = zeros(Num,1);
-    for j = 1:Num
-        Beam_pat = W(j,:,i)*trans;
-        Beam_pat = abs(Beam_pat);
-        [max1,pos1] = max(Beam_pat);
-        Beam_pat(pos1) = -1;
-        max2 = max(Beam_pat);
-        if(max2*thU_mul<=max1)
-            Permu(j,i-1) = pos1;
-            Pat_count(pos1) = Pat_count(pos1)+1;
+    W_norm = W;
+    for i_W = 1:Num  %%%%%% Normalize the row of W
+        W_norm(i_W,:,i) = W(i_W,:,i)/(norm(W(i_W,:,i))+eps);
+    end
+    Beam_pat = abs(W_norm(:,:,i)*trans);
+    if(~strcmp(method,'DOA'))
+        for j = 1:Num
+            [max1,pos1] = max(Beam_pat(j,:));
+            Beam_pat(j,pos1) = -1;
+            max2 = max(Beam_pat(j,:));
+            if(max2*thU_mul<=max1)
+                Permu(j,i-1) = pos1;
+                Pat_count(pos1) = Pat_count(pos1)+1;
+            end
         end
+    else
+        %%%%%%%%%%%%%%%%%%%%%%%% Decided by the energy of the Beam
+%         for j = 1:Num
+%             [max1,pos1] = max(Beam_pat);
+%             [~,pos2] = max(max1);
+%             x_ = pos1(pos2); y_ = pos2;
+%             Permu(x_,i-1) = y_;
+%             Pat_count(y_) = Pat_count(y_)+1;
+%             Beam_pat(x_,:) = zeros(1,Num)-1;
+%             Beam_pat(:,y_) = zeros(Num,1)-1;
+%         end         
+        %%%%%%%%%%%%%%%%%%%%%%%% Decided by the difference of the energy of the Beam
+        Dif = zeros(Num,2);
+        for j = 1:Num
+            [max1,Dif(j,2)] = max(Beam_pat(j,:));
+            Beam_pat(j,Dif(j,2)) = -1;
+            max2 = max(Beam_pat(j,:));
+            Dif(j,1) = max1-max2;
+        end
+        for j = 1:Num
+            [~,pos] = max(Dif(:,1));
+            Permu(pos,i-1) = Dif(pos,2);
+            Pat_count(Dif(pos,2)) = Pat_count(Dif(pos,2))+1;
+            Dif(pos,1) = -1;
+            for j_p = 1:Num
+                if(Dif(j_p,2)==Dif(pos,2) && j_p~=pos)
+                    [max1,Dif(j_p,2)] = max(Beam_pat(j_p,:));
+                    Beam_pat(j_p,Dif(j_p,2)) = -1;
+                    max2 = max(Beam_pat(j_p,:));
+                    Dif(j_p,1) = max1-max2;
+                end
+            end
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     end
     if(~isempty(find(Pat_count>1, 1)))  %%%%Judge if there're more than 1 row of W target the same angle.
         for j = 1:Num

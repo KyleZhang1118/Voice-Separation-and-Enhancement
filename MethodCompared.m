@@ -1,6 +1,6 @@
 close all;
 clc;clear;
-folderPath = '/Results';
+folderPath = './Results';
 dirFol = dir(folderPath);
 j_num=0;
 Metrics_num = 3;
