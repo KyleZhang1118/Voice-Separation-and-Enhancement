@@ -32,6 +32,7 @@ for n_i=1:max_iteration
     y_fun = tanh(y_r)+1i*tanh(y_i);
     sign = abs(det(eye(size(X,1))-(y_fun*y_f'/frame_N)));
     A(n_i,F_i-1) = sign;
+    %%%%%This part trys to adjust the step_size which is unnecessary
     if(sign>100 && sign_size ==0)
         step_size = step_size/10;
         sign_size =1;
@@ -44,6 +45,7 @@ for n_i=1:max_iteration
         step_size = step_size/10;
         sign_size =3;
     end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     W1 = step_size*(eye(size(X,1))-(y_fun*y_f'/frame_N))*W+W;
     W = W1;
 
