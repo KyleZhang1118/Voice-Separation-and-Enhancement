@@ -17,11 +17,23 @@ method = {'DSB'                1;
           'ICA_initial'        0;
           'ICA_Sawada'         0;
           'IVA'                0;
+          'IVA_woDR'           0;
+          'AuxIVA'             0;
+          'OverIVA'            0;
+          'OverILRMA'          0;
+          'ILRMA_woDR'         0;
+          'ILRMA'              0;
+          'ILRMA_PF'           0;
+          'FastMNMF1'          0;
+          'FastMNMF2'          0;
+          'FastFCA_AS'         0; %%%% remaining to be written
           'maxSNR'             0;
+          %%%%%%% Dereverberation
+          'WPE'                0;
           %%%%%%% Compound method
           'cGMM_maxSNR'        0;
           'ALL'                0
-          };                      %%%%%%% This version only support single method once, dont select multiple methods and 'ALL'
+          };                    %%%%%%% This version only support single method once, dont select multiple methods and 'ALL'
 speakerNum = 10;
 pathFe = '../simuData/sound sources/simulation/female';
 dirFe = dir(pathFe);
