@@ -48,18 +48,20 @@ In general, methods in beamforming use the steering vector or other spatial info
 * ICA_funda is the regular frequency-domain ICA realized on the information maximization approach combined with natural gradient. The permutation is regularized by calculating the correlation between the separated signal and the original signal of targer speech in frequency domain.  
 * ICA_initial is similar to ICA_funda, while the dimixing matrix is initialized by the inverse matrix of the assumed mixing matrix which loads steering vectors. The post regularization for the ambiguity of permutation is not processed.  
 * ICA_Sawada is similar to ICA_funda, while the post proceeding for the ambiguity of permutation is based on the Sawada method. [7]  
+#### FastICA
+* FastICA_HO_Sawada is frequency-domain FastICA based on the higher-order statistics, in which PCA has been used to reduce dimension and the ambiguity of permutation is sovled by the Sawada method. The separation vectors are iterated alternately and parallel orthogonalized.[8]  
 #### IVA
-* IVA is based on the minimization of the Kullback-Leibler divergence and the model of signal is spherically symmetric multivariate Laplace distribution. [8]  
+* IVA is based on the minimization of the Kullback-Leibler divergence and the model of signal is spherically symmetric multivariate Laplace distribution. [9]  
 * IVA_woDR is similar to IVA, while do not uses PCA to reduce the dimension of signals. The separated signals are selected by the energy.  
-* AuxIVA uses the iterative projection(IP) algorithm to obtain the demixing matrix. [9]  
-* OverIVA is designed for the over-determined situation, which does not use the PCA to reduce dimension. The dimixing matrix in OverIVA consists of two parts, one is searched by iterative projection(IP) to separate the target speech, another is an orthogonal subspace to help IP. OverIVA obtains a high SIR compared to AuxIVA which uses PCA, but losses the components of targer speech resulting in a low SAR. [10]  
+* AuxIVA uses the iterative projection(IP) algorithm to obtain the demixing matrix. [10]  
+* OverIVA is designed for the over-determined situation, which does not use the PCA to reduce dimension. The dimixing matrix in OverIVA consists of two parts, one is searched by iterative projection(IP) to separate the target speech, another is an orthogonal subspace to help IP. OverIVA obtains a high SIR compared to AuxIVA which uses PCA, but losses the components of targer speech resulting in a low SAR. [11]  
 #### ILRMA
-* ILRMA is a combination of NMF and AuxIVA which uses the time-varying gaussian distribution and NMF to model the spectrogram of target sources. The improvement of ILRMA compared to AuxIVA is around 2dB in my test. [11]  
+* ILRMA is a combination of NMF and AuxIVA which uses the time-varying gaussian distribution and NMF to model the spectrogram of target sources. The improvement of ILRMA compared to AuxIVA is around 2dB in my test. [12]  
 * ILRMA_woDR is similar to ILRMA, but does not use the PCA to reduce dimension. The purpose of ILRMA_woDR is to test the numerical stability of ILRMA. The separated signals are selected by the energy.  
-* ILRMA_PF is similar to ILRMA, while the basis of NMF is shared across the signals and a partition function is used to compose the spectogram of target signals. [11]  
+* ILRMA_PF is similar to ILRMA, while the basis of NMF is shared across the signals and a partition function is used to compose the spectogram of target signals. [12]  
 * OverILRMA is a over-determined version of ILRMA. Compared to OverIVA, NMF is used to model the spectrogram of target signals in the way which is similar in the ILRMA.  
 #### FastMNMF
-* FastMNMF1 and FastMNMF2 are the fast version of MNMF based on the jointly-diagonalizable(JD) full-rank spatial models. The spatial convariance matrices of target signals are composed by M(which commonly is the number of channels) rank-1 matrices. These methods are expected to work in the reverberation environments but not good in my test. The iteration seems not stable and is numerical sensitive. [12]  
+* FastMNMF1 and FastMNMF2 are the fast version of MNMF based on the jointly-diagonalizable(JD) full-rank spatial models. The spatial convariance matrices of target signals are composed by M(which commonly is the number of channels) rank-1 matrices. These methods are expected to work in the reverberation environments but not good in my test. The iteration seems not stable and is numerical sensitive. [13]  
 
 ## References
 [1] Lehmann, E.A. Diffuse reverberation model for efficient image-source simulation of room impulse responses. 2009.  
@@ -69,10 +71,11 @@ In general, methods in beamforming use the steering vector or other spatial info
 [5] Ernst, W. Blind acoustic beamforming based on generalized eigenvalue decomposition. 2007.  
 [6] Takuya, H. Online MVDR beamformer based on complex Gaussian mixture model with spatial prior for noise robust ASR. 2017.  
 [7] Hiroshi, A. Robust and precise method for solving the permutation problem of frequency-domain blind source separation. 2004.  
-[8] Taesu, K. Blind source separation exploiting higher-order frequency denpendencies. 2007.  
-[9] Nobutaka, O. Stable and fast update rules for independent vector analysis based on auxiliary function technique. 2011.  
-[10] Robin, S. Independent vector analysis with more microphones than sources. 2019.  
-[11] Daichi, K. Determined blind source separation with independent low-rank matrix analysis. 2018.  
-[12] Kouher, S. Fast multichannel nonnegative matrix factorization with directivity-aware jointly-diagonalizable spatial covariance matrices for blind source separation. 2020.  
+[8] E. Bingham. A fast fixed-point algorithm for indenpendent component analysis of complex valued signals. 2000.  
+[9] Taesu, K. Blind source separation exploiting higher-order frequency denpendencies. 2007.  
+[10] Nobutaka, O. Stable and fast update rules for independent vector analysis based on auxiliary function technique. 2011.  
+[11] Robin, S. Independent vector analysis with more microphones than sources. 2019.  
+[12] Daichi, K. Determined blind source separation with independent low-rank matrix analysis. 2018.  
+[13] Kouher, S. Fast multichannel nonnegative matrix factorization with directivity-aware jointly-diagonalizable spatial covariance matrices for blind source separation. 2020.  
 
-Last edited in 3/11/2021
+Last edited in 9/14/2021
