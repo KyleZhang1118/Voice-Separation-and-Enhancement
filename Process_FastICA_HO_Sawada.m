@@ -57,7 +57,7 @@ for i = 2:K_m
         W_f = (W_f*W_f')^(-1/2)*W_f;
         dObj = pObj-Obj;
         pObj = Obj;
-        A(i_iteration,i) = Obj;
+        A(i_iteration,i-1) = Obj;
         if(abs(dObj)/abs(Obj)<theta)
             break;
         end
