@@ -232,6 +232,20 @@ if(ismember('ICA_Sawada',method) || ismember('ALL',method))
     end    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(ismember('FastICA_HO_Sawada',method) || ismember('ALL',method))
+    SetupStruc.FastICA_HO_Sawada.K = 2048;                            
+    SetupStruc.FastICA_HO_Sawada.hop = round(SetupStruc.FastICA_HO_Sawada.K/4);        
+    [Transfer,SetupStruc] = Cal_transfer(SetupStruc,'FastICA_HO_Sawada');
+    [Re.FastICA_HO_Sawada.S,Re.FastICA_HO_Sawada.W,SetupStruc] = Process_FastICA_HO_Sawada(s,Transfer,SetupStruc);
+    Re.method = [Re.method;'FastICA_HO_Sawada'];
+    if(sign_plot == 1)
+        autoPlot(Re.FastICA_HO_Sawada.S,'FastICA_HO_Sawada',SetupStruc.fs);
+    end
+    if(sign_write == 1)
+        autoWrite(Re.FastICA_HO_Sawada.S,SetupStruc.fs,'FastICA_HO_Sawada');
+    end    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(ismember('IVA',method) || ismember('ALL',method))
     SetupStruc.IVA.K = 2048;                            
     SetupStruc.IVA.hop = round(SetupStruc.IVA.K/4);        

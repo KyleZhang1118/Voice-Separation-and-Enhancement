@@ -21,6 +21,7 @@ method = {'DSB'                1;
           'ICA_funda'          0;
           'ICA_initial'        0;
           'ICA_Sawada'         0;
+          'FastICA_HO_Sawada'  0;
           'IVA'                0;
           'IVA_woDR'           0;
           'AuxIVA'             0;
