@@ -1,5 +1,4 @@
 function [SetupStruc] = ISM_setup()
-
 %%%%%%   the environment coefficients
 SetupStruc.T60 = 0;      %T60, Options: 0, 0.3, 0.6, 0.9
 SetupStruc.c = 340;
